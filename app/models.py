@@ -1,5 +1,7 @@
 from app.database import Base
 from sqlalchemy import Column,Integer,String,ForeignKey,Numeric,DateTime,func,Enum,Boolean
+from sqlalchemy.orm import relationship
+
 from app.schemas import SplitType
 
 
@@ -13,6 +15,8 @@ class User(Base):
     password=Column(String,nullable=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
+    expenses = relationship("Expense", back_populates="payer")
+    splits=relationship("Split",back_populates="participant")
 
 
 class Friendship(Base):
@@ -30,16 +34,21 @@ class Expense(Base):
     notes=Column(String,nullable=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
+    payer=relationship("User", back_populates="expenses")
+    splits=relationship("Split",back_populates="expense")
+
 class Split(Base):
     __tablename__="splits"
     id=Column(Integer,primary_key=True)
     expense_id=Column(Integer,ForeignKey("expenses.id",ondelete="CASCADE"),nullable=False)
-    participate_id=Column(Integer,ForeignKey("users.id"),nullable=False)
+    participant_id=Column(Integer,ForeignKey("users.id"),nullable=False)
     amount_owed=Column(Numeric,nullable=False)
     is_settled=Column(Boolean,default=False)
     settled_at=Column(DateTime)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
+    expense=relationship("Expense",back_populates="splits")
+    participant=relationship("User",back_populates="splits")
 
 
 

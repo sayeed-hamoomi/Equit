@@ -7,3 +7,11 @@ def hash_password(plain):
 
 def verify_password(plain,hashed):
     return pwd_context.verify(plain,hashed)
+
+def split_equal(amount,num_friends):
+      if num_friends <= 0:
+        raise ValueError("Number of friends must be greater than zero.")
+      return amount/num_friends
+       
+    
+ 
