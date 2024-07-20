@@ -17,6 +17,9 @@ class User(Base):
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
     expenses = relationship("Expense", back_populates="payer")
     splits=relationship("Split",back_populates="participant")
+    transactions_sent = relationship("Transaction", foreign_keys="[Transaction.sender_id]", back_populates="sender")
+    transactions_received = relationship("Transaction", foreign_keys="[Transaction.receiver_id]", back_populates="receiver")
+
 
 
 class Friendship(Base):
@@ -50,5 +53,21 @@ class Split(Base):
     expense=relationship("Expense",back_populates="splits")
     participant=relationship("User",back_populates="splits")
 
+class Settleup(Base):
+    __tablename__="settleup"
+    id=Column(Integer,primary_key=True)
+    payer_id=Column(Integer,ForeignKey("users.id",ondelete='CASCADE'),nullable=False)
+    receiver_id=Column(Integer,ForeignKey("users.id",ondelete='CASCADE'),nullable=False)
+    amount=Column(Numeric,nullable=False)
+    settled_at=Column(DateTime(timezone=True), server_default=func.now())
+    notes=Column(String,nullable=True)
 
-
+class Transaction(Base):
+    __tablename__ = "transactions"
+    id = Column(Integer, primary_key=True)
+    sender_id = Column(Integer, ForeignKey("users.id", ondelete='CASCADE'), nullable=False)
+    receiver_id = Column(Integer, ForeignKey("users.id", ondelete='CASCADE'), nullable=False)
+    amount = Column(Numeric, nullable=False)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    sender = relationship("User", foreign_keys=[sender_id], back_populates="transactions_sent")
+    receiver = relationship("User", foreign_keys=[receiver_id], back_populates="transactions_received")

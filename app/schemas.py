@@ -74,3 +74,15 @@ class SplitRespose(BaseModel):
     # updated_at:datetime    
 class ExpenseResponse(ListExpenseResponse):
     splits:List[SplitRespose]    
+
+class AddSettleup(BaseModel):
+    payer_id:int
+    receiver_id:int
+    amount:int
+    notes:str
+    # settled_at:datetime
+class AddTransaction(BaseModel):
+    sender_id:int
+    receiver_id:int
+    amount:Decimal
+    created_at:datetime
