@@ -1,5 +1,5 @@
 from app.database import Base
-from sqlalchemy import Column,Integer,String,ForeignKey,Numeric,DateTime,func,Enum,Boolean
+from sqlalchemy import Column,Integer,String,ForeignKey,Numeric,DateTime,func,Enum,Boolean,DECIMAL
 from sqlalchemy.orm import relationship
 
 from app.schemas import SplitType
@@ -25,7 +25,9 @@ class User(Base):
 class Friendship(Base):
     __tablename__="friendships"
     user_id=Column(Integer,ForeignKey("users.id",ondelete='CASCADE'),primary_key=True)
-    friend_id=Column(Integer,ForeignKey("users.id",ondelete='CASCADE'),primary_key=True)    
+    amount=Column(Numeric,nullable=False, server_default='0')
+    friend_id=Column(Integer,ForeignKey("users.id",ondelete='CASCADE'),primary_key=True)
+        
 
 class Expense(Base):
     __tablename__="expenses"
@@ -53,14 +55,14 @@ class Split(Base):
     expense=relationship("Expense",back_populates="splits")
     participant=relationship("User",back_populates="splits")
 
-class Settleup(Base):
-    __tablename__="settleup"
-    id=Column(Integer,primary_key=True)
-    payer_id=Column(Integer,ForeignKey("users.id",ondelete='CASCADE'),nullable=False)
-    receiver_id=Column(Integer,ForeignKey("users.id",ondelete='CASCADE'),nullable=False)
-    amount=Column(Numeric,nullable=False)
-    settled_at=Column(DateTime(timezone=True), server_default=func.now())
-    notes=Column(String,nullable=True)
+# class Settleup(Base):
+#     __tablename__="settleup"
+#     id=Column(Integer,primary_key=True)
+#     payer_id=Column(Integer,ForeignKey("users.id",ondelete='CASCADE'),nullable=False)
+#     receiver_id=Column(Integer,ForeignKey("users.id",ondelete='CASCADE'),nullable=False)
+#     amount=Column(Numeric,nullable=False)
+#     settled_at=Column(DateTime(timezone=True), server_default=func.now())
+#     notes=Column(String,nullable=True)
 
 class Transaction(Base):
     __tablename__ = "transactions"
@@ -68,6 +70,7 @@ class Transaction(Base):
     sender_id = Column(Integer, ForeignKey("users.id", ondelete='CASCADE'), nullable=False)
     receiver_id = Column(Integer, ForeignKey("users.id", ondelete='CASCADE'), nullable=False)
     amount = Column(Numeric, nullable=False)
+    notes=Column(String,nullable=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     sender = relationship("User", foreign_keys=[sender_id], back_populates="transactions_sent")
     receiver = relationship("User", foreign_keys=[receiver_id], back_populates="transactions_received")

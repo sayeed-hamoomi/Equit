@@ -1,4 +1,5 @@
 from fastapi import Depends,APIRouter,FastAPI,HTTPException,status
+from sqlalchemy import or_
 from typing import List
 from app.database import get_db
 from sqlalchemy.orm import Session
@@ -12,9 +13,10 @@ router=APIRouter(prefix="/users")
 
 
 @router.get("/",response_model=List[UserResponse])
-def all_users(db: Session = Depends(get_db)):
-    users=db.query(User).all()
+def all_users(search:str="",db: Session = Depends(get_db)):
+    users=db.query(User).filter(or_(User.name.ilike(f"%{search}%"),User.email.ilike(f"%{search}%"))).all()
     return users
+
 @router.post("/",response_model=UserResponse)
 def create_user(user:UserCreate,db: Session = Depends(get_db)):
     user.password=hash_password(user.password)

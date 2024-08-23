@@ -2,7 +2,7 @@ from fastapi import FastAPI,APIRouter,Depends,HTTPException,status
 from app.database import get_db
 from app.schemas import CalculateExpense,SplitType,CalculateExpenseResponse,AddExpense,ListExpenseResponse,ExpenseResponse
 from sqlalchemy.orm import Session
-from app.models import Expense,Split,User
+from app.models import Expense,Split,User,Friendship
 from app.oauth2 import get_current_user
 from typing import List
 
@@ -62,6 +62,8 @@ def create_expense(expense:AddExpense,db:Session=Depends(get_db),current_user=De
     expense_id=new_expense.id
     for split in expense.split:
         new_split=Split(expense_id=expense_id,participant_id=split.participant_id,amount_owed=split.amount_owed)
+        db.query(Friendship).filter(Friendship.user_id==expense.payer_id,Friendship.friend_id==split.participant_id).update({"amount": Friendship.amount+split.amount_owed},synchronize_session=False)
+        db.query(Friendship).filter(Friendship.friend_id==expense.payer_id,Friendship.user_id==split.participant_id).update({"amount": Friendship.amount-split.amount_owed}, synchronize_session=False)
         db.add(new_split)
 
     db.commit()
