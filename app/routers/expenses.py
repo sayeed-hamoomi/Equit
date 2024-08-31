@@ -62,6 +62,7 @@ def create_expense(expense:AddExpense,db:Session=Depends(get_db),current_user=De
     expense_id=new_expense.id
     for split in expense.split:
         new_split=Split(expense_id=expense_id,participant_id=split.participant_id,amount_owed=split.amount_owed)
+        # check participant
         db.query(Friendship).filter(Friendship.user_id==expense.payer_id,Friendship.friend_id==split.participant_id).update({"amount": Friendship.amount+split.amount_owed},synchronize_session=False)
         db.query(Friendship).filter(Friendship.friend_id==expense.payer_id,Friendship.user_id==split.participant_id).update({"amount": Friendship.amount-split.amount_owed}, synchronize_session=False)
         db.add(new_split)
