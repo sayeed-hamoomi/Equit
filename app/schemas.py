@@ -86,5 +86,9 @@ class AddTransaction(BaseModel):
     receiver_id:int
     amount:Decimal
     notes:Optional[str]
-class ViewFriendResponce(UserResponse):
-    id:int
+class ViewFriendResponce(BaseModel):
+    friend: UserResponse
+    amount: float
+    expenses: List[ExpenseResponse]
+    
+    
