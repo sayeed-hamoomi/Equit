@@ -9,7 +9,7 @@ from app.utils import hash_password
 from app.oauth2 import get_current_user
 
 
-router=APIRouter(prefix="/users",)
+router=APIRouter(prefix="/users",tags=["Users"])
 
 
 @router.get("/",response_model=List[UserResponse])

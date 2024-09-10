@@ -6,7 +6,7 @@ from app.models import Expense,Split,User,Friendship
 from app.oauth2 import get_current_user
 from typing import List
 
-router=APIRouter(prefix="/expenses")
+router=APIRouter(prefix="/expenses",tags=["Expenses"])
 
 
 @router.post("/calculate",response_model=CalculateExpenseResponse)

@@ -4,7 +4,7 @@ from app.database import get_db
 from app.schemas import AddTransaction
 from app.models import Transaction,Friendship
 
-router= APIRouter(prefix="/transactions")
+router= APIRouter(prefix="/transactions",tags=["transactions"])
 
 
 

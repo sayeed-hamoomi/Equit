@@ -7,7 +7,7 @@ from app.oauth2 import get_current_user
 from typing import List
 from app.schemas import UserResponse,ViewFriendResponce
 
-router= APIRouter(prefix="/friendships")
+router= APIRouter(prefix="/friendships",tags=["Friendships"])
 
 
 @router.post("/add")
